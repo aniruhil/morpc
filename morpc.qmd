@@ -1,0 +1,67 @@
+---
+title: "R to my Rescue"
+date: "`r Sys.Date()`"
+title-slide-attributes:
+    data-background-image: imgs/sundialbig.jpg
+    data-background-size: fit
+    data-background-opacity: "0.75"
+author: "Ani Ruhil"
+author-meta: "Ohio University"
+format: 
+  revealjs:
+    incremental: false
+    smaller: true
+    scrollable: true
+    theme: dark
+    logo: imgs/28.png
+    footer: "https://aniruhil.org"
+    transition: slide
+    background-transition: fade
+    transition-speed: fast
+    width: 1900
+    height: 1069
+    auto-stretch: false
+    touch: true
+    controls: true
+    revealjs-plugins:
+      - fullscreen
+editor_options: 
+  chunk_output_type: console
+---
+
+# Outline
+
+
+---
+
+## A `{leaflet}` map
+
+```{r}
+#| fig-pos: "center"
+  
+library(tidyverse)
+library(leaflet)
+
+leaflet() %>%
+  addTiles() %>%
+  setView(lat = 41.16, lng = -8.63, zoom = 13) %>%
+  widgetframe::frameWidget(width = "110%", height = 1000)
+
+```
+
+
+---
+
+## A `{DT}` Table {background-color="#ffffff"}
+
+```{r} 
+
+DT::datatable(mtcars)
+
+```
+
+
+
+---
+
+

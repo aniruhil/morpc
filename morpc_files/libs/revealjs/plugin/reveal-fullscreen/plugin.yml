@@ -1,0 +1,7 @@
+name: RevealFullscreen
+script: fullscreen.js
+stylesheet: ["fontawesome/css/all.css", "style.css"]
+self-contained: false
+#config:
+#  chalkboard:
+#    buttons: true
