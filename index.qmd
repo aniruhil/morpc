@@ -1,5 +1,5 @@
 ---
-title: "R to my Rescue"
+title: "The aRt of the possible ..."
 date: "`r Sys.Date()`"
 title-slide-attributes:
     data-background-image: imgs/sundialbig.jpg
@@ -12,14 +12,14 @@ format:
     incremental: false
     smaller: true
     scrollable: true
-    theme: dark
-    logo: imgs/28.png
-    footer: "https://aniruhil.org"
+    theme: [css/custom.scss]
+    logo: imgs/Voinovich_HW_Cutler.png
+#    footer: "https://aniruhil.org"
     transition: slide
     background-transition: fade
     transition-speed: fast
-    width: 1900
-    height: 1069
+    width: 2400
+    height: 1350
     auto-stretch: false
     touch: true
     controls: true
@@ -29,8 +29,13 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Outline
+## Outline 
 
+- Why R? 
+
+- How R? 
+
+- Now R 
 
 ---
 
@@ -45,23 +50,90 @@ library(leaflet)
 leaflet() %>%
   addTiles() %>%
   setView(lat = 41.16, lng = -8.63, zoom = 13) %>%
-  widgetframe::frameWidget(width = "110%", height = 1000)
+  widgetframe::frameWidget(width = "100%", height = 800)
 
 ```
 
 
 ---
 
-## A `{DT}` Table {background-color="#ffffff"}
+## A `{DT}` Table 
 
 ```{r} 
 
-DT::datatable(mtcars)
+DT::datatable(mtcars) %>%
+    DT::formatRound(
+      columns = c('mpg', 'disp', 'drat', 'wt', 'qsec'),
+      digits = 2
+      )
 
 ```
+
+---
+
+## Data from the Census Bureau?
+
+
+
+::: {.panel-tabset}
+
+### Code
+
+```{r, echo = TRUE, results = 'hide'}
+
+library(tidycensus)
+
+get_acs(
+  "tract",
+  state = "39",
+  county = "Franklin",
+  year = 2020,
+  variables = "B01001_001",
+  geometry = TRUE
+  ) -> frat
+
+
+get_acs(
+  "tract",
+  state = "39",
+  year = 2020,
+  variables = "B01001_001",
+  geometry = TRUE
+  ) -> oht
+
+
+```
+
+### The Maps
+
+```{r, fig.align = "center", fig.size = 4.5, fig.height = 4.5, out.width = "100%"}
+
+frat %>%
+  ggplot() +
+  geom_sf(
+    aes(fill = (estimate / 100)),
+    color = "white"
+  ) +
+  ggthemes::theme_map() +
+  theme(legend.position = "bottom") +
+  labs(fill = "Population (in 100 persons)") +
+  viridis::scale_fill_viridis("magma")
+
+oht %>%
+  ggplot() +
+  geom_sf(
+    aes(fill = (estimate / 100)),
+    color = "white"
+  ) +
+  ggthemes::theme_map() +
+  theme(legend.position = "bottom") +
+  labs(fill = "Population (in 100 persons)") +
+  viridis::scale_fill_viridis("magma")
+
+```
+:::
 
 
 
 ---
-
 

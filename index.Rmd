@@ -1,0 +1,255 @@
+---
+title: "The aRt of the Possible"
+subtitle: "MORPC Data Day 2023"
+author: "Ani Ruhil"
+date: "Updated `r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+#    chakra: libs/remark-latest.min.js
+    mathjax: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_HTMLorMML"
+    lib_dir: libs
+    css: ["default", "css/fonts.css", "css/sfah.css", "css/footerheader.css"]
+    seal: true
+    self_contained: false
+    nature:
+      beforeInit: "https://platform.twitter.com/widgets.js"
+      ratio: '16:9'
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      countdown: 80000
+    navigation:
+      scroll: false
+      click: false
+editor_options: 
+  chunk_output_type: console
+---
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Register.StartupHook("TeX Jax Ready",function () {
+    MathJax.Hub.Insert(MathJax.InputJax.TeX.Definitions.macros,{
+      cancel: ["Extension","cancel"],
+      bcancel: ["Extension","cancel"],
+      xcancel: ["Extension","cancel"],
+      cancelto: ["Extension","cancel"]
+    });
+  });
+</script>
+
+```{r setup, include=FALSE}
+library(kableExtra)
+library(formattable)
+library(here)
+library(hrbragg)
+
+options(htmltools.dir.version = FALSE)
+
+knitr::opts_chunk$set(
+  echo = FALSE, warning = FALSE, message = FALSE, 
+  dpi = 300, cache = TRUE, tidy = FALSE, fig.align = "center", 
+  fig.width = 9, fig.height = 6, out.width = "100%", dev = "ragg_png"
+  )
+
+knitr::write_bib(c("knitr", "stringr"), "", width = 60)
+```
+
+```{r xaringan-tile-view, echo = FALSE}
+xaringanExtra::use_tile_view()
+```
+
+```{r broadcast, echo = FALSE}
+xaringanExtra::use_broadcast()
+```
+
+```{r xaringan-scribble, echo = FALSE, eval = FALSE}
+xaringanExtra::use_scribble()
+```
+
+```{r xaringan-slide-tone, echo = FALSE, eval = FALSE}
+xaringanExtra::use_slide_tone()
+```
+
+```{r xaringan-panelset, echo = FALSE}
+xaringanExtra::use_panelset()
+```
+
+```{r xaringanExtra-search, echo = FALSE, eval = FALSE}
+xaringanExtra::use_search(show_icon = TRUE)
+```
+
+```{r xaringanExtra-webcam, echo = FALSE}
+xaringanExtra::use_webcam()
+```
+
+```{r xaringanExtra-clipboard, echo = FALSE, eval = TRUE}
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #90BE6D\"></i>",
+    error_text = "<i class=\"fa fa-times-circle\" style=\"color: #F94144\"></i>"
+  ),
+  rmarkdown::html_dependency_font_awesome()
+  )
+```
+
+```{r xaringan-fit-screen, echo = FALSE, eval = FALSE}
+xaringanExtra::use_fit_screen()
+```
+
+```{r xaringan-extra-styles, echo = FALSE, eval = FALSE}
+xaringanExtra::use_extra_styles(
+  hover_code_line = TRUE,         #<<
+  mute_unhighlighted_code = TRUE  #<<
+  )
+```
+
+```{r xaringanExtra, echo = FALSE, eval = FALSE}
+xaringanExtra::use_progress_bar(
+  color = "#0051BA", 
+  location = "top",
+  height = 10px)
+```
+
+
+### .heat[.fancy[Agenda for the day]]
+
+> Participants will learn to tell their story using data, including selecting and presenting data in a way that gets their message across.
+
+#### .heat[.fancy[Act I:  ]] 
+
+#### .heat[.fancy[Act II:  ]] 
+
+#### .heat[.fancy[Act III:  ]] 
+
+#### .heat[.fancy[Act IV:  ]] 
+
+---
+
+## A `{leaflet}` map
+
+```{r}
+  
+library(tidyverse)
+library(leaflet)
+
+leaflet() %>%
+  addTiles() %>%
+  setView(lat = 41.16, lng = -8.63, zoom = 13) %>%
+  widgetframe::frameWidget(width = "100%", height = 400)
+
+```
+
+
+---
+
+## A `{DT}` Table 
+
+```{r} 
+
+DT::datatable(mtcars) %>%
+    DT::formatRound(
+      columns = c('mpg', 'disp', 'drat', 'wt', 'qsec'),
+      digits = 2
+      )
+
+```
+
+---
+
+## Data from the Census Bureau?
+
+
+.panelset[
+
+.panel[.panel-name[The Code]
+
+```{r, echo = TRUE, results = 'hide'}
+
+library(tidycensus)
+
+get_acs(
+  "tract",
+  state = "39",
+  county = "Franklin",
+  year = 2020,
+  variables = "B01001_001",
+  geometry = TRUE
+  ) -> frat
+
+
+get_acs(
+  "tract",
+  state = "39",
+  year = 2020,
+  variables = "B01001_001",
+  geometry = TRUE
+  ) -> oht
+
+```
+]
+
+.panel[.panel-name[The Maps]
+
+```{r, out.width="60%"}
+
+frat %>%
+  ggplot() +
+  geom_sf(
+    aes(fill = (estimate / 100)),
+    color = "white"
+  ) +
+  ggthemes::theme_map() +
+  theme(legend.position = "bottom") +
+  labs(fill = "Population (in 100 persons)") +
+  viridis::scale_fill_viridis("magma") -> p1
+
+oht %>%
+  ggplot() +
+  geom_sf(
+    aes(fill = (estimate / 100)),
+    color = "white"
+  ) +
+  ggthemes::theme_map() +
+  theme(legend.position = "bottom") +
+  labs(fill = "Population (in 100 persons)") +
+  viridis::scale_fill_viridis("magma") -> p2
+
+library(patchwork)
+
+(p1 + p2)
+
+```
+]
+
+]
+
+---
+
+class: middle, right
+
+```{r, out.width="50%"}
+knitr::include_graphics("imgs/THanks.gif")
+```
+
+# Find me at...
+
+```{r, echo=FALSE}
+#c<img class="circle" src="https://github.com/aniruhil.png" width="175px"/>
+library(fontawesome)
+```
+
+[`r fa(name = "twitter")` @aruhil](http://twitter.com/aruhil)  
+[`r fa(name = "link")` https://aniruhil.org](https://aniruhil.org)  
+[`r fa(name = "paper-plane")` ruhil@ohio.edu](mailto:ruhil@ohio.edu)
+
+```{r, eval=FALSE}
+library(webshot)
+install_phantomjs()
+file_name <- paste0("file://", normalizePath("GVSAcademy_august2021.html"))
+webshot(file_name, "dataviz.pdf")
+
+pagedown::chrome_print("GVSAcademy_august2021.html")
+
+```
+
+
